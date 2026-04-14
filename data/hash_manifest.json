@@ -1,0 +1,17 @@
+{
+  "source_locator": "https://clinicaltrials.gov/api/v2/studies?filter.overallStatus=COMPLETED&pageSize=100",
+  "search_terms": [
+    "heart disease",
+    "diabetes",
+    "oncology",
+    "stroke",
+    "alzheimer"
+  ],
+  "sample_size": 10000,
+  "transformations": [
+    "Multi-term paginated fetch",
+    "Benford-ready extraction"
+  ],
+  "output_file": "data/protocol_changes.csv",
+  "sha256_hash": "d3555bd3c6106160c7c8533036f97984f8aa3b071cbf648cc98405eb321bba7e"
+}
