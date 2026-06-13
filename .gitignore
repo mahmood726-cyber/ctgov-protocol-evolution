@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 .env
 .pytest_cache/
+STUCK_FAILURES.md
+STUCK_FAILURES.jsonl
+sentinel-findings.md
+sentinel-findings.jsonl

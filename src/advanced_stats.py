@@ -22,7 +22,13 @@ def benfords_law_fit(data):
         if s and s[0] != '0':
             first_digits.append(int(s[0]))
     
-    counts = np.bincount(first_digits)[1:10]
+    if not first_digits:
+        raise ValueError("No valid first digits found in input data for Benford analysis.")
+
+    # minlength=10 guarantees indices 1..9 always exist even when a leading
+    # digit (e.g. 8 or 9) is absent; otherwise the slice is shorter than the
+    # 9-element theoretical vector and the subtraction below broadcasts-errors.
+    counts = np.bincount(first_digits, minlength=10)[1:10]
     observed_probs = counts / np.sum(counts)
     
     # Theoretical Benford's Law: P(d) = log10(1 + 1/d)
@@ -38,6 +44,8 @@ def benfords_law_fit(data):
 
 def simple_kmeans(data, k=3, max_iters=20):
     """Manual implementation of K-Means clustering (Numpy-only)."""
+    if len(data) < k:
+        raise ValueError(f"Cannot form {k} clusters from {len(data)} points.")
     # Normalize data (Min-Max)
     data_min = data.min(axis=0)
     data_max = data.max(axis=0)

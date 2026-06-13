@@ -1,7 +1,13 @@
 import os
+import sys
 import json
 import hashlib
 import unittest
+
+import numpy as np
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from src.advanced_stats import benfords_law_fit, gini, simple_kmeans
 
 class TestProtocolEvolutionPipeline(unittest.TestCase):
     
@@ -43,6 +49,30 @@ class TestProtocolEvolutionPipeline(unittest.TestCase):
         
         self.assertTrue(words <= 156, f"Word count ({words}) exceeds E156 limit (156)")
         self.assertEqual(sentences, 7, f"Sentence count ({sentences}) must be exactly 7")
+
+class TestAdvancedStatsEngine(unittest.TestCase):
+
+    def test_benford_handles_missing_leading_digits(self):
+        # No 8s or 9s present: bincount must still yield a 9-vector
+        # (regression for a length-mismatch broadcast error).
+        data = [1, 1, 2, 3, 1, 2, 4, 5, 6, 7, 1, 2, 3]
+        result = benfords_law_fit(data)
+        self.assertEqual(len(result['observed']), 9)
+        self.assertEqual(len(result['theoretical']), 9)
+        self.assertGreaterEqual(result['mad'], 0.0)
+
+    def test_benford_empty_input_raises(self):
+        with self.assertRaises(ValueError):
+            benfords_law_fit([])
+
+    def test_gini_known_value(self):
+        # Perfectly equal distribution -> Gini ~ 0
+        self.assertAlmostEqual(gini(np.array([5.0, 5.0, 5.0, 5.0])), 0.0, places=4)
+
+    def test_kmeans_too_few_points_raises(self):
+        with self.assertRaises(ValueError):
+            simple_kmeans(np.random.rand(2, 3), k=4)
+
 
 if __name__ == '__main__':
     unittest.main()
