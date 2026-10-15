@@ -52,7 +52,7 @@ def simple_kmeans(data, k=3, max_iters=20):
     norm_data = (data - data_min) / (data_max - data_min + 1e-7)
     
     # Randomly initialize centroids
-    indices = np.random.choice(len(data), k, replace=False)
+    indices = np.random.default_rng(0).choice(len(data), k, replace=False)
     centroids = norm_data[indices]
     
     for _ in range(max_iters):

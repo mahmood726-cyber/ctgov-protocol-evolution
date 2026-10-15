@@ -1,3 +1,5 @@
+> **Methods correction (15 October 2026).** The original dataset contains one current CT.gov record per study, not the study's archived amendment history. It therefore cannot estimate the protocol adaptation frequency or other longitudinal claims in this protocol. The historical-diff engine added in `src/history_diff.py` requires independently verified past versions and has not yet been applied to a sourced longitudinal cohort. All prior amendment-frequency interpretations are provisional and should not be cited as established results.
+
 # E156 Protocol — `ctgov-protocol-evolution`
 
 This repository is the source code and dashboard backing an E156 micro-paper on the [E156 Student Board](https://mahmood726-cyber.github.io/e156/students.html).
