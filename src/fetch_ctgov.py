@@ -1,16 +1,18 @@
 import urllib.request
+from urllib.parse import quote
 import json
 import hashlib
 import os
 import csv
 import time
 
-# Target: ALL completed studies on ClinicalTrials.gov (~316,000)
+# Legacy current-record cross-sectional extraction; NOT historical revisions.
 BASE_URL = "https://clinicaltrials.gov/api/v2/studies?filter.overallStatus=COMPLETED&pageSize=1000"
 
 def fetch_all_completed(max_total=500000):
     all_studies_count = 0
     next_page_token = None
+    retries = 0
     output_csv = 'data/protocol_changes.csv'
     
     os.makedirs('data', exist_ok=True)
@@ -20,7 +22,7 @@ def fetch_all_completed(max_total=500000):
         'StartDate', 'CompletionDate', 'Phase'
     ]
     
-    print(f"Starting MASSIVE ingestion of all completed studies...")
+    print("Starting current-record ingestion (no version history)...")
     with open(output_csv, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
@@ -28,7 +30,7 @@ def fetch_all_completed(max_total=500000):
         while all_studies_count < max_total:
             url = BASE_URL
             if next_page_token:
-                url += f"&pageToken={next_page_token}"
+                url += f"&pageToken={quote(next_page_token, safe='')}"
             
             try:
                 req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -79,6 +81,7 @@ def fetch_all_completed(max_total=500000):
                     
                     writer.writerows(rows)
                     all_studies_count += len(rows)
+                    retries = 0
                     print(f"Progress: {all_studies_count} studies ingested...")
                     
                     next_page_token = data.get('nextPageToken')
@@ -88,16 +91,22 @@ def fetch_all_completed(max_total=500000):
                     time.sleep(0.01)
             except Exception as e:
                 print(f"Error at page {all_studies_count}: {e}")
-                time.sleep(1.0) # wait on error
+                retries += 1
+                if retries >= 5:
+                    raise RuntimeError("Cannot complete CT.gov current-record export after 5 consecutive errors") from e
+                time.sleep(min(2 ** retries, 30))
                 
     with open(output_csv, 'rb') as f:
         file_hash = hashlib.sha256(f.read()).hexdigest()
         
     cert = {
         'source_locator': BASE_URL,
-        'total_available': all_studies_count,
+        'total_available': None,  # Not reported by this paginated client.
         'sample_size': all_studies_count,
-        'transformations': ['Massive streaming ingestion', 'Full ClinicalTrials.gov database dump'],
+        'data_scope': 'current_registry_records_not_historical_versions',
+        'query_exhausted': next_page_token is None,
+        'capped_at': max_total,
+        'transformations': ['Current-record cross-sectional export; no amendment history'],
         'sha256_hash': file_hash
     }
     with open('data/hash_manifest.json', 'w', encoding='utf-8') as f:
@@ -105,4 +114,4 @@ def fetch_all_completed(max_total=500000):
 
 if __name__ == "__main__":
     fetch_all_completed(max_total=550000)
-    print("Massive TruthCert database generated successfully.")
+    print("Current-record export generated; verify SHA-256 and completeness before analysis.")
