@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Protocol Evolution Dynamics: Tracking Adaptations in ClinicalTrials.gov</title>
+<title>CT.gov Current-record Baseline — Historical Protocol Changes Not Established</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { padding: 2rem 1rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #1a1a1a; background: #ecfeff; }
@@ -37,18 +37,19 @@
 <div class="wrap">
 
 <p class="mark">◆ Synthēsis · Methods Note</p>
-<h1>Protocol Evolution Dynamics: Tracking Adaptations in ClinicalTrials.gov</h1>
-<p class="sub">Project <code>ProtocolEvolutionDynamics</code> · <strong>methods</strong> study · primary estimand <strong>Trial Adaptation Frequency (TAF)</strong></p>
+<h1>CT.gov Current-record Baseline — Protocol History Separately Assessed</h1>
+<div class="highlight"><strong>Scope correction:</strong> Current-record snapshots do not show protocol evolution, amendment frequency or outcome switching. Earlier statements implying otherwise were not supported by the dataset.</div>
+<p class="sub">Project <code>ProtocolEvolutionDynamics</code> · <strong>methods</strong> study · current dataset <strong>cross-sectional study descriptors (no longitudinal estimand)</strong></p>
 
 <div class="stats">
-  <span class="chip">📏 <strong>94 words</strong> / 7 sentences</span>
+  <span class="chip">📏 <strong>101 words</strong> / 7 sentences</span>
 </div>
 
 <div class="body">
-<p>Clinical trial protocols dynamically adapt over their lifecycle to resolve operational and scientific challenges. We analyzed 10,000 multi-disease trials from ClinicalTrials.gov using Benford's Law to detect reporting anomalies in enrollment data. The analytical engine implements unsupervised K-means clustering to identify trial archetypes based on enrollment size, study duration, and outcome density. We computed the Gini coefficient across a research landscape including oncology, diabetes, and neurology to measure structural enrollment inequality. Statistical provenance is secured via TruthCert cryptographic hashing and deterministic NumPy-only processing to support reproducibility. These analytics are rendered in an interactive dashboard summarizing study execution fidelity and data integrity. This project provides a multi-dimensional framework for monitoring reporting anomalies and trial archetype distribution in clinical research.</p>
+<p>ClinicalTrials.gov provides structured snapshots of registered studies. We analyzed a previously collected sample of 10,000 current records, of which 9,763 met the downstream analysis criteria. The analysis describes reported enrollment, elapsed study duration, and outcome counts rather than historical amendments. Descriptive statistics include Benford first-digit proportions, K-means centroids, and enrollment Gini coefficients. These metrics are sensitive to sampling and cannot establish fraud, data integrity, causal relationships, or protocol changes. A new offline engine compares two or more independently sourced historical versions for the same NCT identifier. Its outputs remain exploratory until historical-source authenticity, revision completeness, and clinical interpretation are independently verified.</p>
 </div>
 
-<div class="readme">A project to track how clinical trial protocols dynamically adapt over their lifecycle based on ClinicalTrials.gov historical API data. Fetches historical data from ClinicalTrials.gov API (v2), quantifies frequency and impact of protocol changes, generates an interactive static HTML dashboard, and outputs an E156 micro-paper.</div>
+<div class="readme">One present-day registry record per study can support cross-sectional descriptors but cannot reveal amendments. The new src/history_diff.py requires explicitly supplied, authentic historical versions of each NCT study, and does not automatically fetch a revision archive.</div>
 
 <div class="files">Repo contents: <code>README.md</code> <code>data</code> <code>site</code> <code>src</code> <code>tests</code></div>
 
